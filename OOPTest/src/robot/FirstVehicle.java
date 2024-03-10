@@ -17,7 +17,7 @@ public class FirstVehicle extends Vehicle implements IFlyable{
     @Override
     public void displayInfo () {
         System.out.print("speed: " + speed + " ");
-        super.displayInfo();
+//        super.displayInfo();
         System.out.println("");
     }
     

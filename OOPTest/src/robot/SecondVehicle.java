@@ -21,7 +21,7 @@ public class SecondVehicle extends Vehicle implements IFlyable, IShootable {
     public void displayInfo () {
         System.out.print("bullet: " + bullet + " ");
         System.out.print("damage: " + damage + " ");
-        super.displayInfo();
+//        super.displayInfo();
         System.out.println("");
     }
     

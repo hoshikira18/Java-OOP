@@ -44,5 +44,4 @@ public class Main {
         IShootable sb = (IShootable)b;
         sb.shoot();
     }
-    
 }

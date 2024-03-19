@@ -20,12 +20,17 @@ public class Cake {
         this.price = price;
     }
 
-    public String getMaker() {
+    public String[] getMaker() {
         
         
-        String result = "";
-        
-        result = maker.substring(0, maker.length()-1).toLowerCase() + maker.substring(maker.length()-1).toUpperCase();
+//        String result = "";
+//        
+//        result = maker.substring(0, maker.length()-1).toLowerCase() + maker.substring(maker.length()-1).toUpperCase();
+
+            maker.toLowerCase();
+            String[] result = maker.split("");
+            result[result.length - 1].toUpperCase();
+            result.toString();
         
         return result;
     }

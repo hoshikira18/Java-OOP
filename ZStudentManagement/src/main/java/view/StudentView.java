@@ -37,7 +37,7 @@ public class StudentView {
             showDetailStudent(student);
         }
     }
-    
+
     public void studentNotFound() {
         System.out.println("");
         System.out.println("+---------------------------------+");
@@ -45,6 +45,7 @@ public class StudentView {
         System.out.println("+---------------------------------+");
         System.out.println("");
     }
+
     public void studentExist() {
         System.out.println("");
         System.out.println("+---------------------------------+");
@@ -60,8 +61,6 @@ public class StudentView {
             showAllStudents(studentsFouned);
         }
     }
-
-    
 
     public void showDetailStudent(StudentModel student) {
         System.out.println("+---------------------------------+");
@@ -87,5 +86,13 @@ public class StudentView {
         System.out.println("| 3. Exit                                         |");
         System.out.println("+-------------------------------------------------+");
         System.out.print("Please select an option (1-3):");
+    }
+
+    public void deleteSuccess() {
+        System.out.println("");
+        System.out.println("+---------------------------------+");
+        System.out.println("|          Detele Success!        |");
+        System.out.println("+---------------------------------+");
+        System.out.println("");
     }
 }

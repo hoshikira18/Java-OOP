@@ -24,9 +24,6 @@ public class ZStudentManagement {
                     sc.nextLine();
                     System.out.print("Enter student's roll number: ");
                     String mssv = sc.nextLine();
-                    
-//                    controller.checkStudentExistByMSSV(mssv);
-                    
                     System.out.print("Enter student's name: ");
                     String name = sc.nextLine();
                     System.out.print("Enter student's age: ");
@@ -44,7 +41,10 @@ public class ZStudentManagement {
                     break;  
                     
                 case 4:
-//                    controller.showAllTag();
+                    sc.nextLine();
+                    System.out.print("Enter id: ");
+                    String id = sc.nextLine();
+                    controller.deteleStudent(id);
                     break;
                 case 5:
                     sc.nextLine();

@@ -59,11 +59,12 @@ public class StudentController {
         }
   
     }
+    
 
     public void updateStudent(String mssv) throws IOException, FileNotFoundException, ClassNotFoundException {
         view.showDetailStudent(db.getStudent(mssv));
         if (!db.checkStudentExistByMSSV(mssv)) {
-//            view.studentNotFound();
+            view.studentNotFound();
         } else {
             int choice2 = 0;
             final int option2 = 3;
@@ -92,4 +93,20 @@ public class StudentController {
             }
         }
     }
+    
+    public void deteleStudent (String mssv) throws IOException {
+        try {
+            if(db.checkStudentExistByMSSV(mssv)) {
+                db.deteleStudent(mssv);
+//                view.deleteSuccess();
+            }
+            else {
+                System.out.println("Not found");
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(StudentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
 }

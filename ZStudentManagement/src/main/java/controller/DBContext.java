@@ -1,10 +1,9 @@
 package controller;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,6 +12,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.StudentModel;
 
 
@@ -45,6 +46,7 @@ public class DBContext {
                 students.add((StudentModel) ois.readObject());
             }
         }
+        ois.close();
         fis.close();
         return students;
     }
@@ -53,6 +55,7 @@ public class DBContext {
 
         fis = new FileInputStream(dbFolderPath + "\\" + mssv + ".dat");
         ois = new ObjectInputStream(fis);
+
         return (StudentModel) ois.readObject();
     }
 
@@ -60,10 +63,14 @@ public class DBContext {
         fos = new FileOutputStream(dbFolderPath + "\\" + student.getId() + ".dat");
         oos = new ObjectOutputStream(fos);
         oos.writeObject(student);
-
+        oos.close();
+        fos.close();
+        oos = null;
+        fos = null;
         addTag(student);
     }
 
+    
     public void updateStudent(String mssv, String option, String value) throws IOException, ClassNotFoundException {
         fis = new FileInputStream(dbFolderPath + "\\" + mssv + ".dat");
         ois = new ObjectInputStream(fis);
@@ -73,8 +80,14 @@ public class DBContext {
         } else if (option.compareTo("age") == 0) {
             student.setAge(Integer.parseInt(value));
         }
+        ois.close();
         fis.close();
         updateTag(mssv, option, value);
+        fos = new FileOutputStream(dbFolderPath + "\\" + student.getId() + ".dat");
+        oos = new ObjectOutputStream(fos);
+        oos.writeObject(student);
+        oos.close();
+        fos.close();
     }
 
     public List<StudentModel> searchStudentByName(String name) throws FileNotFoundException, IOException, ClassNotFoundException {
@@ -89,6 +102,8 @@ public class DBContext {
                 fis = new FileInputStream(dbFolderPath + "\\" + tag[0] + ".dat");
                 ois = new ObjectInputStream(fis);
                 studentsFouned.add((StudentModel) ois.readObject());
+                ois.close();
+                fis.close();
             }
         }
 
@@ -96,47 +111,45 @@ public class DBContext {
     }
 
     public boolean checkStudentExistByMSSV(String mssv) throws FileNotFoundException, IOException, ClassNotFoundException {
-        fis = new FileInputStream(dbFolderPath + "\\index.dat");
-        Scanner sc = new Scanner(fis);
+        List<String> allLines = Files.readAllLines(Paths.get(dbFolderPath + "\\index.dat"));
         boolean isFouned = false;
-        while (sc.hasNextLine()) {
-            String[] tag = sc.nextLine().split("-");
-            String mssvInLine = tag[0];
-            if (mssvInLine.compareTo(mssv) == 0) {
+        for (String line : allLines) {
+            if (line.contains(mssv)) {
                 isFouned = true;
                 return isFouned;
             }
         }
-        fis.close();
 
         return isFouned;
     }
 
-    public void addTag(StudentModel student) throws FileNotFoundException, IOException {
+    public void addTag(StudentModel student) throws IOException{
         String tag = student.getId() + "-" + student.getName() + "\n";
-        fos = new FileOutputStream(dbFolderPath + "\\index.dat", true);
-        byte[] bytes =  tag.getBytes();
-        fos.write(bytes);
-        fos.close();
+        try {
+            fos = new FileOutputStream(dbFolderPath + "\\index.dat", true);
+            byte[] bytes = tag.getBytes();
+            fos.write(bytes);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            fos.close();
+        }
     }
 
     public void updateTag(String mssv, String option, String value) throws FileNotFoundException, IOException {
         if (option.compareTo("name") == 0) {
             String newIndex = "";
-            
+
             List<String> allLines = Files.readAllLines(Paths.get(dbFolderPath + "\\index.dat"));
-            
+
             for (int i = 0; i < allLines.size(); i++) {
-                if(allLines.get(i).contains(mssv)) {
+                if (allLines.get(i).contains(mssv)) {
                     newIndex += mssv + "-" + value + "\n";
                     System.out.println("contain: " + allLines.get(i));
-                }
-                else{
+                } else {
                     newIndex += allLines.get(i) + "\n";
                 }
             }
-            
-            System.out.println(newIndex);
 
             fos = new FileOutputStream(dbFolderPath + "\\index.dat", false);
             byte[] bytes = newIndex.getBytes();
@@ -145,4 +158,25 @@ public class DBContext {
         }
     }
 
+    public void deteleStudent(String mssv) throws IOException {
+        File data = new File(dbFolderPath + "\\" + mssv + ".dat");
+        data.delete();
+        deleteTag(mssv);
+    }
+    
+    public void deleteTag (String mssv) throws IOException {
+        String newIndex = "";
+        
+        List<String> allLines = Files.readAllLines(Paths.get(dbFolderPath + "\\index.dat"));
+        
+        for (String line : allLines) {
+            if(!line.contains(mssv)) {
+                newIndex += line + "\n";
+            }
+        }
+        fos = new FileOutputStream(dbFolderPath + "\\index.dat", false);
+        byte[] bytes = newIndex.getBytes();
+        fos.write(bytes);
+        fos.close();
+    }
 }
